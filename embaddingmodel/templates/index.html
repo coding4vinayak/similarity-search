@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Search with Embeddings</title>
+</head>
+<body>
+    <h1>Text Search with Embeddings</h1>
+
+    <h2>Add Data</h2>
+    <form id="add-form">
+        <textarea name="text" id="text" rows="4" cols="50" placeholder="Enter text to add"></textarea><br>
+        <button type="submit">Add Text</button>
+    </form>
+
+    <h2>Search Data</h2>
+    <form id="search-form">
+        <input type="text" name="query" id="query" placeholder="Enter search query">
+        <button type="submit">Search</button>
+    </form>
+
+    <h2>Search Results</h2>
+    <ul id="results"></ul>
+
+    <script>
+        document.getElementById('add-form').onsubmit = async function (e) {
+            e.preventDefault();
+            const text = document.getElementById('text').value;
+            const response = await fetch('/add', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                body: `text=${encodeURIComponent(text)}`
+            });
+            const result = await response.json();
+            alert(result.message);
+        };
+
+        document.getElementById('search-form').onsubmit = async function (e) {
+            e.preventDefault();
+            const query = document.getElementById('query').value;
+            const response = await fetch('/search', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                body: `query=${encodeURIComponent(query)}`
+            });
+            const results = await response.json();
+            const resultsList = document.getElementById('results');
+            resultsList.innerHTML = '';
+            if (results.best_match) {
+                const li = document.createElement('li');
+                li.textContent = `${results.best_match} (Similarity: ${results.similarity.toFixed(4)})`;
+                resultsList.appendChild(li);
+            } else {
+                const li = document.createElement('li');
+                li.textContent = 'No match found.';
+                resultsList.appendChild(li);
+            }
+        };
+    </script>
+</body>
+</html>

@@ -65,6 +65,7 @@ def search():
     # Initialize variables to store the best match
     best_match = None
     best_similarity = -1  # Initialize with a low similarity score
+    best_match_details = {}
 
     # Compare the query embedding with each stored embedding
     for text, entry in embeddings.items():
@@ -86,8 +87,9 @@ def search():
         if similarity > best_similarity:
             best_similarity = similarity
             best_match = text
+            best_match_details = entry
 
-    return jsonify({'best_match': best_match, 'similarity': best_similarity})
+    return jsonify({'best_match': best_match, 'similarity': best_similarity, 'details': best_match_details})
 
 if __name__ == '__main__':
     app.run(debug=True)
