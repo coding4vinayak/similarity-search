@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Embedding Search</title>
+</head>
+<body>
+    <h1>Embedding Search</h1>
+
+    <h2>Add Data</h2>
+    <form action="/add" method="post">
+        <textarea name="text" rows="10" cols="50" placeholder="Enter text data here..."></textarea><br>
+        <input type="submit" value="Add Data">
+    </form>
+
+    <h2>Search Data</h2>
+    <form action="/search" method="post">
+        <input type="text" name="text" placeholder="Enter search query..."><br>
+        <input type="submit" value="Search">
+    </form>
+
+    <h2>Results</h2>
+    <div id="results"></div>
+
+    <script>
+        const resultsDiv = document.getElementById('results');
+
+        function displayResults(data) {
+            resultsDiv.innerHTML = '<ul>' +
+                data.results.map(result => `<li>${result.text} (Similarity: ${result.similarity})</li>`).join('') +
+                '</ul>';
+        }
+
+        document.querySelector('form[action="/search"]').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const query = new FormData(this).get('text');
+            fetch('/search', {
+                method: 'POST',
+                body: new URLSearchParams({ text: query }),
+            })
+            .then(response => response.json())
+            .then(displayResults);
+        });
+    </script>
+</body>
+</html>
