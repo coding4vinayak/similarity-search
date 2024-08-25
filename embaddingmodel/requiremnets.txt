@@ -2,3 +2,4 @@ Flask
 transformers 
 torch
 scikit-learn
+sqlite3
